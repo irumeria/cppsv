@@ -130,26 +130,8 @@ template <typename T, typename R> struct CSV {
 
     csv.headers = slice_to_strings(header, ',');
 
-    return csv;
   }
-
-  string toJson() {
-    string result = "[";
-    for (auto row : rows) {
-      result.append("{");
-      for (auto i = 0; i < headers.size(); i++) {
-        result.append("\"" + headers[i] + "\":");
-        result.append(row[i] + ",");
-      }
-      // remove ,
-      result.erase(result.size() - 1);
-      result.append("},");
-    }
-    result.erase(result.size() - 1);
-    result.append("]");
-    return result;
-  }
-
+  CSV<T,R>(){}
   static CSV<T, R> readCSV(string path) {
     char buf[BUFSIZE] = {};
     ifstream input_file{path};
