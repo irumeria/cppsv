@@ -1,2 +1,2 @@
 # cppsv
-a c++ csv prase and convert library
+a c++ csv parse and convert library
