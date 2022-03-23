@@ -97,8 +97,8 @@ vector<string> slice_to_strings(vector<T> &arr, T slice_point) {
     string s = string(ret.begin(), ret.end());
 
     // ?
-    s.erase(s.size()-2);
-    
+    s.erase(s.size() - 2);
+
     result.push_back(s);
   }
   return result;
@@ -107,6 +107,49 @@ vector<string> slice_to_strings(vector<T> &arr, T slice_point) {
 template <typename T, typename R> struct CSV {
   vector<T> headers;
   vector<vector<R>> rows;
+  CSV<T, R>(string _input) {
+
+    auto input_len = _input.size();
+    auto input = std::vector<char>(_input.begin(), _input.end());
+
+    auto header = slicing(input, 0, input_len);
+
+    vector<vector<char>> rows = {};
+    while (input_len < input.size()) {
+      rows.push_back(slicing_by(input, input_len, '\n'));
+      input_len += rows[rows.size() - 1].size();
+    }
+
+    rows.erase(rows.begin() + 0);
+
+    CSV<string, string> csv = {};
+
+    for (auto x : rows) {
+      csv.rows.push_back(slice_to_strings(x, ','));
+    }
+
+    csv.headers = slice_to_strings(header, ',');
+
+    return csv;
+  }
+
+  string toJson() {
+    string result = "[";
+    for (auto row : rows) {
+      result.append("{");
+      for (auto i = 0; i < headers.size(); i++) {
+        result.append("\"" + headers[i] + "\":");
+        result.append(row[i] + ",");
+      }
+      // remove ,
+      result.erase(result.size() - 1);
+      result.append("},");
+    }
+    result.erase(result.size() - 1);
+    result.append("]");
+    return result;
+  }
+
   static CSV<T, R> readCSV(string path) {
     char buf[BUFSIZE] = {};
     ifstream input_file{path};
@@ -190,7 +233,7 @@ int main() {
   for (auto x : _csv.headers) {
     cout << x << " ";
   }
-   cout<< " \n";
+  cout << " \n";
   for (auto x : _csv.rows) {
     for (auto y : x) {
       cout << y << " ";
